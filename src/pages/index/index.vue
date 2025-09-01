@@ -7,6 +7,7 @@ import CategoryPanel from '@/pages/index/components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import CostomNavbar from './components/CostomNavbar.vue'
 import { useGuessList } from '@/composables/index'
+import PageSkeleton from './components/PageSkeleton.vue'
 // 轮播图
 const imgList = ref<BannerItem[]>([])
 const getImagList = async () => {
@@ -27,9 +28,12 @@ const getHotList = async () => {
   const res = await getHotListAPI()
   hotList.value = res.result
 }
+const isLoading = ref(false)
 
 onLoad(async () => {
+  isLoading.value = true
   await Promise.all([getImagList(), getCategory(), getHotList()])
+  isLoading.value = false
 })
 
 // 猜你喜欢组合函数调用
@@ -60,8 +64,8 @@ const onRefresherrefresh = async () => {
     class="scroll-view"
     scroll-y
   >
-    <!-- <PageSkeleton v-if="isLoading" /> -->
-    <template>
+    <PageSkeleton v-if="isLoading" />
+    <template v-else>
       <!-- 自定义轮播图 -->
       <XtxSwiper :list="imgList" />
       <!-- 分类面板 -->

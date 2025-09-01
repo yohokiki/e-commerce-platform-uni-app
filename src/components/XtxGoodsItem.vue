@@ -6,7 +6,7 @@ defineProps<{ goods: GoodsItem }>()
 
 <template>
   <navigator
-    url="/pages/index/index"
+    :url="`/pages/Detail/Detail?id=${goods.id}`"
     open-type="navigate"
     hover-class="navigator-hover"
     class="goods"

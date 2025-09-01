@@ -12,7 +12,7 @@ const httpInterceptor = {
     }
 
     // 请求超时
-    options.timeout = 10000
+    options.timeout = 100000
     // 添加小程序请求头标识
     options.header = {
       'source-client': 'miniapp',

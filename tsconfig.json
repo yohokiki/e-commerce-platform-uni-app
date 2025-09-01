@@ -1,6 +1,8 @@
 {
   // "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext", // 或 "es2020"、"node16" 等错误提示中允许的值
+    "moduleResolution": "bundler", // 配合Vite等构建工具时推荐，或对应 "node16"
     "allowJs": true,
     "sourceMap": true,
     "baseUrl": ".",

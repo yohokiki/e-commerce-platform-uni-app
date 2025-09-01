@@ -17,7 +17,7 @@ export type CategoryItem = {
 export type HotItem = {
   id: string
   title: string // 推荐标题
-  type: number //推荐类型
+  type: string //推荐类型
   alt: string // 推荐说明
   pictures: Array<string> // 图片集合
 }
