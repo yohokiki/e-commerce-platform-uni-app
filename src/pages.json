@@ -41,12 +41,6 @@
 				"navigationBarTitleText": "登录"
 			}
 		},
-		// {
-		// 	"path": "pages/index/components/CostomNavbar.vue",
-		// 	"style": {
-		// 		"navigationBarTitleText": "CostomNavbar.vue"
-		// 	}
-		// }
 		{
 			"path": "pages/hot/hot",
 			"style": {
@@ -104,5 +98,36 @@
 				"selectedIconPath": "static/tabs/user_selected.png"
 			}
 		]
-	}
+	},
+	"subPackages": [
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "settings/settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				},
+				{
+					"path": "address/address",
+					"style": {
+						"navigationBarTitleText": "收货地址"
+					}
+				},
+        	{
+					"path": "profile/profile",
+					"style": {
+						"navigationBarTitleText": "个人信息"
+					}
+				},
+        {
+					"path": "address-form/address-form",
+					"style": {
+						"navigationBarTitleText": "收货表单"
+					}
+				}
+			]
+		}
+	]
 }

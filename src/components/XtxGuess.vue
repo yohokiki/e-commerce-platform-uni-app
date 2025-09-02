@@ -5,6 +5,7 @@ import { GusessItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 
+//-- 猜你喜欢 --
 //已结束
 const finish = ref(false)
 // 获取你可能喜欢列表

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import type { XtxGuessInstance } from '@/types/component'
 /**
- * 猜你喜欢组合式函数
+ * -猜你喜欢- 组合式函数
  */
 export const useGuessList = () => {
   const guessRef = ref<XtxGuessInstance>()
@@ -9,7 +9,7 @@ export const useGuessList = () => {
   // 滚动触底事件
   const onScrolltolower = () => {
     guessRef.value?.getMore()
-    console.log('我到底部了')
+    // console.log('我到底部了')
   }
 
   return {

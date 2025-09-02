@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
+import { useMemberStore } from '@/stores/modules/member'
+import { MemberInfoItem } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
 
+// 企业登录
 let code = ''
 onLoad(async () => {
   const res = await wx.login()
   code = res.code
 })
-
 const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
   const encryptedData = ev.detail.encryptedData
   const iv = ev.detail.iv
@@ -17,11 +19,20 @@ const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
     iv,
   })
 }
-
+// 登录成功之后跳到个人主页
+const loginSuccess = (profile: MemberInfoItem) => {
+  const memberStore = useMemberStore()
+  memberStore.setProfile(profile)
+  uni.showToast({ icon: 'none', title: '登录成功' })
+  setTimeout(() => {
+    uni.switchTab({ url: '/pages/my/my' })
+  }, 500)
+}
+// 个人开发登录测试
 const phonenumber = '13123456789'
 const onGetphonenumberSimple = async () => {
   const res = await postLoginWxMinSimpleAPI(phonenumber)
-  uni.showToast({ icon: 'none', title: '登录成功' })
+  loginSuccess(res.result)
 }
 </script>
 
