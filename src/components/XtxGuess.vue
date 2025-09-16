@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { getLikeListAPI } from '@/services/home'
-import { GoodsItem, PageParams, PageResult } from '@/types/gobal'
+import { PageParams } from '@/types/gobal'
 import { GusessItem } from '@/types/home'
-import { onLoad } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 
 //-- 猜你喜欢 --

@@ -76,7 +76,7 @@ type SkusItem = {
   specs: {
     name: string
     valueName: string
-  }
+  }[]
 }
 
 // 所属分类

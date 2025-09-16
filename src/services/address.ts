@@ -40,14 +40,18 @@ export const putAddressAPI = (id: string, data: AddressParams) => {
  * 根据id删除收货地址
  * @param id 收货地址id
  */
-export const delAddress = (id: string) => {
+export const delAddressAPI = (id: string) => {
   return http({
     url: `/member/address/${id}`,
     method: 'DELETE',
   })
 }
 
-export const postAddress = (data: AddressParams) => {
+/**
+ * 提交地址
+ * @param data 地址表单
+ */
+export const postAddressAPI = (data: AddressParams) => {
   return http({
     url: '/member/address',
     method: 'POST',

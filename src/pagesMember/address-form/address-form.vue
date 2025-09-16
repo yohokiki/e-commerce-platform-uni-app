@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getAddressDetailAPI, postAddress, putAddressAPI } from '@/services/address'
+import { getAddressDetailAPI, postAddressAPI, putAddressAPI } from '@/services/address'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
@@ -25,14 +25,18 @@ const getDetailAddress = async () => {
   Object.assign(form.value, res.result)
 }
 
-onLoad(() => {
-  getDetailAddress()
-})
+if (query.id) {
+  onLoad(() => {
+    getDetailAddress()
+  })
+}
+
 // 获取所在地区
-let fullLocationCode: [string, string, string] = ['', '', '']
+// let fullLocationCode: [string, string, string] = ['', '', '']
 const onRegionChange: UniHelper.RegionPickerOnChange = (ev) => {
   form.value.fullLocation = ev.detail.value.join(' ')
-  fullLocationCode = ev.detail.code!
+  const [provinceCode, cityCode, countyCode] = ev.detail.code!
+  Object.assign(form.value, { provinceCode, cityCode, countyCode })
 }
 
 // 是否默认
@@ -49,7 +53,8 @@ const onSubmit = async () => {
     if (query.id) {
       await putAddressAPI(query.id, form.value)
     } else {
-      await postAddress(form.value)
+      console.log(form.value)
+      await postAddressAPI(form.value)
     }
     uni.showToast({ icon: 'success', title: query.id ? '修改成功' : '添加成功' })
     setTimeout(() => {

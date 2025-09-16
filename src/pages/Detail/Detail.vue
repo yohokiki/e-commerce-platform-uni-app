@@ -2,10 +2,16 @@
 import { getDetailAPI } from '@/services/goods'
 import { DetailItem } from '@/types/goods'
 import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import ServicePanel from './components/ServicePanel.vue'
 import AddressPanel from './components/AddressPanel.vue'
-
+import vkDataGoodsSkuPopup from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup.vue'
+import {
+  SkuPopupEvent,
+  SkuPopupInstance,
+  SkuPopupLocaldata,
+} from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import { postCartAPI } from '@/services/cart'
 // 弹出组件
 const popup = ref<{
   open: (type?: UniHelper.UniPopupType) => void
@@ -17,7 +23,7 @@ const popupName = ref<'address' | 'service'>()
 const openPopup = (name: typeof popupName.value) => {
   popupName.value = name
   popup.value?.open()
-  console.log('点击了')
+  // console.log('点击了')
 }
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -32,6 +38,31 @@ const getDetail = async () => {
   const res = await getDetailAPI(query.id)
   detailInfo.value = res.result
   imgLength.value = detailInfo.value.mainPictures.length
+  // SkuPopupLocaldata
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    // SkuPopupSpecItem
+    spec_list: res.result.specs.map((v) => {
+      return {
+        name: v.name,
+        list: v.values,
+      }
+    }),
+    // SkuPopupSkuItem
+    sku_list: res.result.skus.map((v) => {
+      return {
+        _id: v.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: v.picture,
+        price: Number(v.price) * 100,
+        sku_name_arr: v.specs.map((x) => x.valueName),
+        stock: v.inventory,
+      }
+    }),
+  }
 }
 //图片展示下标
 const showImgIndex = ref(1)
@@ -44,9 +75,53 @@ const onChangeImg = (e) => {
   console.log(showImgIndex.value)
 }
 onLoad(() => getDetail())
+// sku组件是否弹出
+const isShowSku = ref(false)
+// sku数据渲染
+const localdata = ref({} as SkuPopupLocaldata)
+const addCart = () => {
+  isShowSku.value = true
+}
+// 按钮模式
+enum SkuMode {
+  Both = 1,
+  Cart = 2,
+  Buy = 3,
+}
+const mode = ref<SkuMode>(SkuMode.Cart)
+// 打开sku弹窗修改按钮模式
+const openSkuPopup = (val: SkuMode) => {
+  // 显式sku弹窗
+  isShowSku.value = true
+  // 修改按钮模式
+  mode.value = val
+}
+// sku组件实例
+const skuPopupRef = ref<SkuPopupInstance>()
+// 计算被选中的值
+const selectArrText = computed(() => {
+  return skuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
+})
+// 加入购物车
+const onAddCart = async (ev: SkuPopupEvent) => {
+  const res = await postCartAPI({ skuId: ev._id, count: ev.buy_num })
+  uni.showToast({ icon: 'none', title: res.msg })
+  isShowSku.value = false
+}
+// 立即购买
+const onBuyNow = (ev: SkuPopupEvent) => {
+  uni.navigateTo({ url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}` })
+}
 </script>
 
 <template>
+  <vkDataGoodsSkuPopup
+    v-model="isShowSku"
+    :localdata="localdata"
+    ref="skuPopupRef"
+    @add-cart="onAddCart"
+    @buy-now="onBuyNow"
+  ></vkDataGoodsSkuPopup>
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
@@ -76,9 +151,9 @@ onLoad(() => getDetail())
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow">
+        <view class="item arrow" @click="openSkuPopup(SkuMode.Both)">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格 </text>
+          <text class="text ellipsis"> {{ selectArrText }} </text>
         </view>
         <view @click="openPopup('address')" class="item arrow">
           <text class="label">送至</text>
@@ -141,8 +216,8 @@ onLoad(() => getDetail())
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="addcart" @click="openSkuPopup(SkuMode.Cart)"> 加入购物车 </view>
+      <view class="buynow" @click="openSkuPopup(SkuMode.Buy)"> 立即购买 </view>
     </view>
   </view>
   <uni-popup ref="popup" type="bottom" background-color="#fff">

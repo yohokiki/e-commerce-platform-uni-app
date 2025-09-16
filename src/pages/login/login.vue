@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
+import { useAddressStore } from '@/stores/modules/address'
 import { useMemberStore } from '@/stores/modules/member'
 import { MemberInfoItem } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
@@ -20,12 +21,15 @@ const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
   })
 }
 // 登录成功之后跳到个人主页
-const loginSuccess = (profile: MemberInfoItem) => {
+const loginSuccess = async (profile: MemberInfoItem) => {
   const memberStore = useMemberStore()
+  const addressStore = useAddressStore()
   memberStore.setProfile(profile)
+  addressStore.getAddressList()
   uni.showToast({ icon: 'none', title: '登录成功' })
   setTimeout(() => {
-    uni.switchTab({ url: '/pages/my/my' })
+    // uni.switchTab({ url: '/pages/my/my' })
+    uni.navigateBack()
   }, 500)
 }
 // 个人开发登录测试

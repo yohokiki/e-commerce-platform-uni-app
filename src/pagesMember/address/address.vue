@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { delAddress, getAddressAPI } from '@/services/address'
+import { delAddressAPI, getAddressAPI } from '@/services/address'
 import { useAddressStore } from '@/stores/modules/address'
 import { AddressItem } from '@/types/address'
-import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { ref, stop } from 'vue'
 
 // 获取地址列表
 const addressList = ref<AddressItem[]>([])
@@ -11,29 +11,35 @@ const getAddress = async () => {
   const res = await getAddressAPI()
   addressList.value = res.result
 }
+
+// 删除地址
 const onDeleteAddress = async (id: string) => {
   uni.showModal({
     content: '确认删除？',
     success: async (success) => {
       if (success.confirm) {
-        await delAddress(id)
+        await delAddressAPI(id)
         getAddress()
       }
     },
   })
 }
+
+// 点击地址
+const onClick = (address: AddressItem) => {
+  const addressStroe = useAddressStore()
+  addressStroe.setChangeAddress(address)
+  console.log('切换地址：', address)
+  uni.navigateBack()
+}
+
 onLoad(() => {
   getAddress()
 })
 
-// 修改收货地址
-const onChangeAddress = (item: AddressItem) => {
-  // 修改地址
-  const addressStore = useAddressStore()
-  addressStore.changeSelectedAddress(item)
-  // 返回上一页
-  uni.navigateBack()
-}
+onShow(() => {
+  getAddress()
+})
 </script>
 
 <template>
@@ -41,32 +47,10 @@ const onChangeAddress = (item: AddressItem) => {
     <!-- 地址列表 -->
     <scroll-view class="scroll-view" scroll-y>
       <view v-if="addressList.length" class="address">
-        <!-- <uni-swipe-action class="address-list">
-          <uni-swipe-action-item class="item" v-for="value in addressList" :key="value.id">
-            <view class="item-content">
-              <view class="user">
-                {{ value.receiver }}
-                <text class="contact">{{ value.contact }}</text>
-                <text v-if="value.isDefault" class="badge">默认</text>
-              </view>
-              <view class="locate">{{ value.fullLocation }}</view>
-              <navigator
-                class="edit"
-                hover-class="none"
-                :url="`/pagesMember/address-form/address-form?id=${value.id}`"
-              >
-                修改
-              </navigator>
-              <template #right>
-                <button @click="onDeleteAddress(value.id)" class="delete-button">删除</button>
-              </template>
-            </view>
-          </uni-swipe-action-item>
-        </uni-swipe-action> -->
         <uni-swipe-action class="address-list">
           <!-- 收货地址项 -->
           <uni-swipe-action-item class="item" v-for="item in addressList" :key="item.id">
-            <view class="item-content" @tap="onChangeAddress(item)">
+            <view class="item-content" @click="onClick(item)">
               <view class="user">
                 {{ item.receiver }}
                 <text class="contact">{{ item.contact }}</text>
@@ -83,8 +67,10 @@ const onChangeAddress = (item: AddressItem) => {
               </navigator>
             </view>
             <!-- 右侧插槽 -->
-            <template #right>
-              <button @tap="onDeleteAddress(item.id)" class="delete-button">删除</button>
+            <template v-slot:right>
+              <view>
+                <button @tap="onDeleteAddress(item.id)" class="delete-button">删除</button>
+              </view>
             </template>
           </uni-swipe-action-item>
         </uni-swipe-action>
