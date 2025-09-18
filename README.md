@@ -1,6 +1,6 @@
 ## 项目简介
 
-小兔鲜儿项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
+电商项目包含从首页浏览商品，商品详情，微信登录，加入购物车，提交订单，微信支付，订单管理等功能。
 
 当前仓库为小兔鲜儿的**项目模板**。
 
@@ -24,7 +24,7 @@
 
 [https://megasu.atomgit.net/uni-app-shop-note/](https://megasu.atomgit.net/uni-app-shop-note/)
 
-### 📦 项目源码
+### 📦 参考源码
 
 [https://gitee.com/Megasu/uniapp-shop-vue3-ts/](https://gitee.com/Megasu/uniapp-shop-vue3-ts/)
 
